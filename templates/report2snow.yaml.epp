@@ -1,0 +1,2 @@
+---
+api_url: "<%= $report2snow::url%>"

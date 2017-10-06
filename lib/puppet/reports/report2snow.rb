@@ -14,8 +14,10 @@ Puppet::Reports.register_report(:report2snow) do
 
 	DISABLED_FILE = File.join([File.dirname(Puppet.settings[:config]), 'report2snow_disabled'])
 	API_URL = config['api_url']
-    USERNAME = config['username']
-    PASSWORD = config['password']
+    # USERNAME = config['username']
+    # PASSWORD = config['password']
+    USERNAME = 'admin'  
+    PASSWORD = 'HereIsN3w1!'
 
 	def process
         # Find out if we should be disabled
@@ -38,68 +40,66 @@ Puppet::Reports.register_report(:report2snow) do
 		end
 
 		whoami = %x( hostname -f ).chomp
-	    msg = "Puppet run resulted in a status: #{real_status} in the #{self.environment} environment"
-        headers = '--header "Content-Type:application/json" --header "Accept: application/json"'
+	  msg = "Puppet run resulted in a status: #{real_status} in the #{self.environment} environment"
+    headers = '--header "Content-Type:application/json" --header "Accept: application/json"'
 
-        level = ''
-        log_mesg = ""
-        if (self.logs.length > 0) then
-          self.logs.length.times do |count|
-            level = self.logs[count].level
+    level = ''
+    log_mesg = ""
+    if (self.logs.length > 0) then
+      self.logs.length.times do |count|
+        level = self.logs[count].level
 
-            f.write("DEBUG: [#{self.logs[count].level}] #{self.logs[count].message}\n")
-            if (level =~ /info/i) then
-              if( self.logs[count].message.include? "FileBucket got a duplicate file" ) then
-                  log_mesg = "#{log_mesg}\n#{self.logs[count].message.chomp}"
-              end
-            else  
-              next if self.logs[count].message.include? "{md5}"
-              next if self.logs[count].message.include? "Applied catalog in"
-              next if self.logs[count].message == ''
-    
-              #log_mesg = "#{log_mesg}\n#{self.logs[count].line} #{self.logs[count].file}\n#{self.logs[count].message.chomp}"
-              f.write("Source: #{self.logs[count].line} #{self.logs[count].file}")
+        f.write("DEBUG: [#{self.logs[count].level}] #{self.logs[count].message}\n")
+        if (level =~ /info/i) then
+          if( self.logs[count].message.include? "FileBucket got a duplicate file" ) then
               log_mesg = "#{log_mesg}\n#{self.logs[count].message.chomp}"
-            end
-
           end
-        end
-        log_mesg.gsub!(/"/, '') 
-        log_mesg.gsub!(/'/, '') 
+        else  
+          next if self.logs[count].message.include? "{md5}"
+          next if self.logs[count].message.include? "Applied catalog in"
+          next if self.logs[count].message == ''
 
+          #log_mesg = "#{log_mesg}\n#{self.logs[count].line} #{self.logs[count].file}\n#{self.logs[count].message.chomp}"
+          f.write("Source: #{self.logs[count].line} #{self.logs[count].file}")
+          log_mesg = "#{log_mesg}\n#{self.logs[count].message.chomp}"
+        end
+
+      end
+    end
+    log_mesg.gsub!(/"/, '') 
+    log_mesg.gsub!(/'/, '') 
 
 		#TODO give an array of status to choose from
 		if (!disabled && self.corrective_change == true) then
-            payload = %Q{ {
-              "catgory":"Puppet Corrective Change",
-              "short_description":"CORRECTIVE change from Puppet detected on #{self.host} from Puppet master #{whoami}",
-              "assignment_group":"Service Desk",
-              "impact":"3",
-              "urgency":"3",
-              "description":"#{msg}",
-              "work_notes":"Node Reports: [code]<a class='web' target='_blank' href='https://#{PUPPETCONSOLE}/#/node_groups/inventory/node/#{self.host}/reports'>Reports</a>[/code]"
-            } }
+      payload = %Q{ {
+        "catgory":"Puppet Corrective Change",
+        "short_description":"CORRECTIVE change from Puppet detected on #{self.host} from Puppet master #{whoami}",
+        "assignment_group":"Service Desk",
+        "impact":"3",
+        "urgency":"3",
+        "description":"#{msg}",
+        "work_notes":"Node Reports: [code]<a class='web' target='_blank' href='https://#{PUPPETCONSOLE}/#/node_groups/inventory/node/#{self.host}/reports'>Reports</a>[/code]"
+      } }
         
-            # We are using CURL on purpose because the rest-client requires a newer version of ruby then what's in
-            # the puppetserver jruby renvironment
-            result = %x(curl -v -X POST #{headers} --data '#{payload}' --user "#{USERNAME}":"#{PASSWORD}" "#{API_URL}" ) 
+      # We are using CURL on purpose because the rest-client requires a newer version of ruby then what's in
+      # the puppetserver jruby renvironment
+      result = %x(curl -v -X POST #{headers} --data '#{payload}' --user "#{USERNAME}":"#{PASSWORD}" "#{API_URL}" ) 
 
-            f.write("-- Start of change --\n")
-            f.write("API URL: #{API_URL}\n")
-            f.write("Payload: #{payload}\n\n")
-            f.write("Exit code: #{$?} #{$?.exitstatus}\n")
-            f.write("Result: #{result}\n\n")
+      f.write("-- Start of change --\n")
+      f.write("API URL: #{API_URL}\n")
+      f.write("Payload: #{payload}\n\n")
+      f.write("Exit code: #{$?} #{$?.exitstatus}\n")
+      f.write("Result: #{result}\n\n")
 
-            # We get a json object back so we'll parse it for useful info
-            data = JSON.parse(result)
-            change_number = data['result']['number']
+      # We get a json object back so we'll parse it for useful info
+      data = JSON.parse(result)
+      change_number = data['result']['number']
 
-            # TODO create a "if slack enabled" hook then send over the SN info to the slack channel
-            f.write("Change Number: #{change_number}\n")
-            f.write("-- End of change --\n\n")
-
+      # TODO create a "if slack enabled" hook then send over the SN info to the slack channel
+      f.write("Change Number: #{change_number}\n")
+      f.write("-- End of change --\n\n")
 		end
-        f.close
+    f.close
 	end
 end
 

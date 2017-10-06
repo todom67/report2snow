@@ -21,9 +21,6 @@ Puppet::Reports.register_report(:report2snow) do
   PASSWORD = 'HereIsN3w1!'
 
 	def process
-    # Find out if we should be disabled
-		disabled = File.exists?(DISABLED_FILE)
-
     # Open a file for debugging purposes
     f = File.open('/var/log/puppetlabs/puppetserver/report2snow.log','w')
 

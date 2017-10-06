@@ -1,6 +1,8 @@
 require 'puppet'
 require 'yaml'
 require 'json'
+require 'base64'
+require 'rest-client'
 
 Puppet::Reports.register_report(:report2snow) do
 	if (Puppet.settings[:config]) then
@@ -12,21 +14,20 @@ Puppet::Reports.register_report(:report2snow) do
 	raise(Puppet::ParseError, "Config file #{configfile} not readable") unless File.exist?(configfile)
 	config = YAML.load_file(configfile)
 
-	DISABLED_FILE = File.join([File.dirname(Puppet.settings[:config]), 'report2snow_disabled'])
 	API_URL = config['api_url']
-    # USERNAME = config['username']
-    # PASSWORD = config['password']
-    USERNAME = 'admin'  
-    PASSWORD = 'HereIsN3w1!'
+  # USERNAME = config['username']
+  # PASSWORD = config['password']
+  USERNAME = 'admin'  
+  PASSWORD = 'HereIsN3w1!'
 
 	def process
-        # Find out if we should be disabled
+    # Find out if we should be disabled
 		disabled = File.exists?(DISABLED_FILE)
 
-        # Open a file for debugging purposes
-        f = File.open('/var/log/puppetlabs/puppetserver/report2snow.log','w')
+    # Open a file for debugging purposes
+    f = File.open('/var/log/puppetlabs/puppetserver/report2snow.log','w')
 
-        # We only want to send a report if we have a corrective change
+    # We only want to send a report if we have a corrective change
 		if (self.status == "changed") then
 			if (self.corrective_change == true) then
 				real_status = "#{self.status} (corrective)"
@@ -70,9 +71,9 @@ Puppet::Reports.register_report(:report2snow) do
     log_mesg.gsub!(/'/, '') 
 
 		#TODO give an array of status to choose from
-		if (!disabled && self.corrective_change == true) then
+		if (self.corrective_change == true) then
       payload = %Q{ {
-        "catgory":"Puppet Corrective Change",
+        "category":"Puppet Corrective Change",
         "short_description":"CORRECTIVE change from Puppet detected on #{self.host} from Puppet master #{whoami}",
         "assignment_group":"Service Desk",
         "impact":"3",

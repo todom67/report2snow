@@ -71,22 +71,12 @@ Puppet::Reports.register_report(:report2snow) do
 		#TODO give an array of status to choose from
 		if (!disabled && self.corrective_change == true) then
             payload = %Q{ {
-              "requested_by":"puppet notkermit",
-              "type":"Standard",
-              "short_description":"AUTOMATED change from Puppet detected on #{self.host}",
+              "catgory":"Puppet Corrective Change",
+              "short_description":"CORRECTIVE change from Puppet detected on #{self.host} from Puppet master #{whoami}",
               "assignment_group":"Service Desk",
               "impact":"3",
               "urgency":"3",
-              "risk":"3",
               "description":"#{msg}",
-              "justification":"AUTOMATED change from Puppet master #{whoami}",
-              "cmdb_ci":"#{self.host}",
-              "start_date":"#{self.configuration_version}",
-              "end_date":"#{self.configuration_version}",
-              "implementation_plan":"my implementation plan",
-              "u_risk_resources":"2",
-              "u_risk_backout":"3",
-              "u_risk_complex":"1",
               "work_notes":"Node Reports: [code]<a class='web' target='_blank' href='https://#{PUPPETCONSOLE}/#/node_groups/inventory/node/#{self.host}/reports'>Reports</a>[/code]"
             } }
         

@@ -42,32 +42,32 @@ Puppet::Reports.register_report(:report2snow) do
 		whoami = %x( hostname -f ).chomp
 	  msg = "Puppet run resulted in a status: #{real_status} in the #{self.environment} environment"
     headers = '--header "Content-Type:application/json" --header "Accept: application/json"'
-        f.write("msg: #{msq}")
+        f.write("msg: #{msg}")
         level = ''
         log_mesg = ""
-        if (self.logs.length > 0) then
-          self.logs.length.times do |count|
-            level = self.logs[count].level
+        # if (self.logs.length > 0) then
+        #   self.logs.length.times do |count|
+        #     level = self.logs[count].level
 
-            f.write("DEBUG: [#{self.logs[count].level}] #{self.logs[count].message}\n")
-            if (level =~ /info/i) then
-              if( self.logs[count].message.include? "FileBucket got a duplicate file" ) then
-                  log_mesg = "#{log_mesg}\n#{self.logs[count].message.chomp}"
-              end
-            else  
-              next if self.logs[count].message.include? "{md5}"
-              next if self.logs[count].message.include? "Applied catalog in"
-              next if self.logs[count].message == ''
+        #     f.write("DEBUG: [#{self.logs[count].level}] #{self.logs[count].message}\n")
+        #     if (level =~ /info/i) then
+        #       if( self.logs[count].message.include? "FileBucket got a duplicate file" ) then
+        #           log_mesg = "#{log_mesg}\n#{self.logs[count].message.chomp}"
+        #       end
+        #     else  
+        #       next if self.logs[count].message.include? "{md5}"
+        #       next if self.logs[count].message.include? "Applied catalog in"
+        #       next if self.logs[count].message == ''
     
-              #log_mesg = "#{log_mesg}\n#{self.logs[count].line} #{self.logs[count].file}\n#{self.logs[count].message.chomp}"
-              f.write("Source: #{self.logs[count].line} #{self.logs[count].file}")
-              log_mesg = "#{log_mesg}\n#{self.logs[count].message.chomp}"
-            end
+        #       #log_mesg = "#{log_mesg}\n#{self.logs[count].line} #{self.logs[count].file}\n#{self.logs[count].message.chomp}"
+        #       f.write("Source: #{self.logs[count].line} #{self.logs[count].file}")
+        #       log_mesg = "#{log_mesg}\n#{self.logs[count].message.chomp}"
+        #     end
 
-          end
-        end
-        log_mesg.gsub!(/"/, '') 
-        log_mesg.gsub!(/'/, '') 
+        #   end
+        # end
+        # log_mesg.gsub!(/"/, '') 
+        # log_mesg.gsub!(/'/, '') 
         f.write("--- checking change--\n")
 
 		#TODO give an array of status to choose from

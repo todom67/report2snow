@@ -50,7 +50,7 @@ Puppet::Reports.register_report(:report2snow) do
       incidentNumber = responseData['result']['number']
       created = responseData['result']['opened_at']
       timestamp = Time.now.utc.iso8601
-      debugFile.write("[#{timestamp}]: Puppet run on #{self.host} resulted in a status of '#{real_status}'' in the '#{self.environment}' environment\n")
+      debugFile.write("[#{timestamp}]: Puppet run on #{self.host} resulted in a status of #{real_status} in the #{self.environment} environment\n")
       debugFile.write("[#{timestamp}]: ServiceNow Incident #{incidentNumber} was created on #{created}\n")
     end
     debugFile.close

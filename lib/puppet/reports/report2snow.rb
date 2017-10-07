@@ -13,7 +13,7 @@ Puppet::Reports.register_report(:report2snow) do
   SN_URL = @config['api_url']
   SN_USERNAME = @config['username']
   SN_PASSWORD = @config['password']
-  PUPPETCONSOLE = 'puppet.aws.aheadaviation.com'
+  PUPPETCONSOLE = @config['console_url']
 
 	def process
     # Open a file for debugging purposes

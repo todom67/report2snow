@@ -1,7 +1,7 @@
 require 'puppet'
 require 'yaml'
 require 'json'
-# require 'rest-client'
+require 'rest-client'
 require 'base64'
 
 Puppet::Reports.register_report(:report2snow) do

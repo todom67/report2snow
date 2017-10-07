@@ -17,6 +17,7 @@ Puppet::Reports.register_report(:report2snow) do
     USERNAME = config['username']
     PASSWORD = config['password']
 
+
 	def process
         # Find out if we should be disabled
 		disabled = File.exists?(DISABLED_FILE)
@@ -66,10 +67,10 @@ Puppet::Reports.register_report(:report2snow) do
         end
         log_mesg.gsub!(/"/, '') 
         log_mesg.gsub!(/'/, '') 
-
+        f.write("--- checking change--\n")
 
 		#TODO give an array of status to choose from
-		if (!disabled && self.corrective_change == true) then
+    if (!disabled && self.corrective_change == true) then
             payload = %Q{ {
               "requested_by":"puppet notkermit",
               "type":"Standard",

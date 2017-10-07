@@ -2,6 +2,7 @@
 # -------
 #
 # Daniel Wittenberg <dan.wittenberg@thinkahead.com>
+# Timothy Odom <tim.odom@thinkahead.com>
 #
 # Copyright
 # ---------
@@ -9,6 +10,8 @@
 # Copyright 2017 Ahead LLC, unless otherwise noted.
 #
 # @param url URL for API integration
+# @param puppet_console URL of the Puppet Console
+# @param debug optional flag to activate debugging messages 
 
 class report2snow (
   Stdlib::Httpsurl $url,

@@ -17,20 +17,20 @@ Puppet::Reports.register_report(:report2snow) do
     debugFile = File.open('/var/log/puppetlabs/puppetserver/report2snow.log','w')
     debugFile.write("--- starting process ---\n")
     # We only want to send a report if we have a corrective change
-    real_status = ''
-		if (self.status == "changed") then
-			if (self.corrective_change == true) then
-				real_status = "#{self.status} (corrective)"
-			elsif (self.corrective_change == false) then
-				real_status = "#{self.status} (intentional)"
-			else
-				real_status = "#{self.status} (unknown - #{self.corrective_change})"
-			end
-		else
-			real_status = "#{self.status}"
-    end
+    self.status == "changed" && self.corrective_change == true ? real_status = "#{self.status} (corrective)" : real_status = "#{self.status}" 
+		# if (self.status == "changed") then
+		# 	if (self.corrective_change == true) then
+		# 		real_status = "#{self.status} (corrective)"
+		# 	elsif (self.corrective_change == false) then
+		# 		real_status = "#{self.status} (intentional)"
+		# 	else
+		# 		real_status = "#{self.status} (unknown - #{self.corrective_change})"
+		# 	end
+		# else
+		# 	real_status = "#{self.status}"
+    # end
     debugFile.write("API URL: #{API_URL}\n")
-    debugFile.write("REAL STATUS: #{real_status}")
+    debugFile.write("REAL STATUS: #{real_status}\n")
     debugFile.write("--- closing file ---\n")
     debugFile.close
 	end

@@ -71,46 +71,46 @@ Puppet::Reports.register_report(:report2snow) do
         f.write("--- checking change--\n")
 
 		#TODO give an array of status to choose from
-    if (!disabled && self.corrective_change == true) then
-            payload = %Q{ {
-              "requested_by":"puppet notkermit",
-              "type":"Standard",
-              "short_description":"AUTOMATED change from Puppet detected on #{self.host}",
-              "assignment_group":"Service Desk",
-              "impact":"3",
-              "urgency":"3",
-              "risk":"3",
-              "description":"#{msg}",
-              "justification":"AUTOMATED change from Puppet master #{whoami}",
-              "cmdb_ci":"#{self.host}",
-              "start_date":"#{self.configuration_version}",
-              "end_date":"#{self.configuration_version}",
-              "implementation_plan":"my implementation plan",
-              "u_risk_resources":"2",
-              "u_risk_backout":"3",
-              "u_risk_complex":"1",
-              "work_notes":"Node Reports: [code]<a class='web' target='_blank' href='https://#{PUPPETCONSOLE}/#/node_groups/inventory/node/#{self.host}/reports'>Reports</a>[/code]"
-            } }
+    # if (!disabled && self.corrective_change == true) then
+    #         payload = %Q{ {
+    #           "requested_by":"puppet notkermit",
+    #           "type":"Standard",
+    #           "short_description":"AUTOMATED change from Puppet detected on #{self.host}",
+    #           "assignment_group":"Service Desk",
+    #           "impact":"3",
+    #           "urgency":"3",
+    #           "risk":"3",
+    #           "description":"#{msg}",
+    #           "justification":"AUTOMATED change from Puppet master #{whoami}",
+    #           "cmdb_ci":"#{self.host}",
+    #           "start_date":"#{self.configuration_version}",
+    #           "end_date":"#{self.configuration_version}",
+    #           "implementation_plan":"my implementation plan",
+    #           "u_risk_resources":"2",
+    #           "u_risk_backout":"3",
+    #           "u_risk_complex":"1",
+    #           "work_notes":"Node Reports: [code]<a class='web' target='_blank' href='https://#{PUPPETCONSOLE}/#/node_groups/inventory/node/#{self.host}/reports'>Reports</a>[/code]"
+    #         } }
         
-            # We are using CURL on purpose because the rest-client requires a newer version of ruby then what's in
-            # the puppetserver jruby renvironment
-            result = %x(curl -v -X POST #{headers} --data '#{payload}' --user "#{USERNAME}":"#{PASSWORD}" "#{API_URL}" ) 
+    #         # We are using CURL on purpose because the rest-client requires a newer version of ruby then what's in
+    #         # the puppetserver jruby renvironment
+    #         result = %x(curl -v -X POST #{headers} --data '#{payload}' --user "#{USERNAME}":"#{PASSWORD}" "#{API_URL}" ) 
 
-            f.write("-- Start of change --\n")
-            f.write("API URL: #{API_URL}\n")
-            f.write("Payload: #{payload}\n\n")
-            f.write("Exit code: #{$?} #{$?.exitstatus}\n")
-            f.write("Result: #{result}\n\n")
+    #         f.write("-- Start of change --\n")
+    #         f.write("API URL: #{API_URL}\n")
+    #         f.write("Payload: #{payload}\n\n")
+    #         f.write("Exit code: #{$?} #{$?.exitstatus}\n")
+    #         f.write("Result: #{result}\n\n")
 
-            # We get a json object back so we'll parse it for useful info
-            data = JSON.parse(result)
-            change_number = data['result']['number']
+    #         # We get a json object back so we'll parse it for useful info
+    #         data = JSON.parse(result)
+    #         change_number = data['result']['number']
 
-            # TODO create a "if slack enabled" hook then send over the SN info to the slack channel
-            f.write("Change Number: #{change_number}\n")
-            f.write("-- End of change --\n\n")
+    #         # TODO create a "if slack enabled" hook then send over the SN info to the slack channel
+    #         f.write("Change Number: #{change_number}\n")
+    #         f.write("-- End of change --\n\n")
 
-		end
+		# end
         f.close
 	end
 end

@@ -23,7 +23,7 @@ Puppet::Reports.register_report(:report2snow) do
     # We only want to send a report if we have a corrective change
     self.status == "changed" && self.corrective_change == true ? real_status = "#{self.status} (corrective)" : real_status = "#{self.status}" 
     msg = "Puppet run resulted in a status of '#{real_status}'' in the '#{self.environment}' environment"
-    DEBUG == true ? logFile.write("[#{timestamp}]: DEBUG: msg: #{msg}\n")
+    logFile.write("[#{timestamp}]: DEBUG: msg: #{msg}\n") if DEBUG == true  
     if real_status == 'changed (corrective)' then
       request_body_map = {
         :active => 'false',
@@ -40,7 +40,7 @@ Puppet::Reports.register_report(:report2snow) do
         :urgency => '1',
         :work_notes => "Node Reports: [code]<a class='web' target='_blank' href='#{PUPPETCONSOLE}/#/node_groups/inventory/node/#{self.host}/reports'>Reports</a>[/code]"
       }
-      DEBUG == true ? logFile.write("[#{timestamp}]: DEBUG: payload:\n-------\n#{request_body_map}\n-----\n")
+      logFile.write("[#{timestamp}]: DEBUG: payload:\n-------\n#{request_body_map}\n-----\n") if DEBUG == true
       response = RestClient.post("#{SN_URL}",
                                    request_body_map.to_json,    # Encode the entire body as JSON
                                   {
@@ -48,7 +48,7 @@ Puppet::Reports.register_report(:report2snow) do
                                     :content_type => 'application/json',
                                     :accept => 'application/json'}
                                 )
-                                DEBUG == true ? logFile.write("[#{timestamp}]: DEBUG: response:\n-------\n#{response}\n-----\n")
+      logFile.write("[#{timestamp}]: DEBUG: response:\n-------\n#{response}\n-----\n") if DEBUG == true
       responseData = JSON.parse(response)
       incidentNumber = responseData['result']['number']
       created = responseData['result']['opened_at']

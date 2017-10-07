@@ -11,6 +11,8 @@
 # @param url URL for API integration
 
 class report2snow (
+  String $servicenow_username = undef,
+  String $servicenow_password = undef,
   $url,
 ) {
   validate_re($url, 'https:\/\/.+.service-now.com\/api/now\/.+', 'The URL is invalid')

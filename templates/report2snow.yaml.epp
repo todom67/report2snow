@@ -1,4 +1,3 @@
 ---
 api_url: "<%= $report2snow::url%>"
-password: "<%= $report2snow::password %>"
-username: "<%= $report2snow::username %>"
+console_url: "<%= $report2snow::puppet_console %>"

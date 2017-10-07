@@ -11,12 +11,9 @@
 # @param url URL for API integration
 
 class report2snow (
-  $url,
-  String $username = undef,
-  String $password = undef
+  Stdlib::Httpsurl $url,
+  Stdlib::Httpsurl $puppet_console
 ) {
-  validate_re($url, 'https:\/\/.+.service-now.com\/api/now\/.+', 'The URL is invalid')
-
   pe_ini_setting { "${module_name}_enable_reports":
     ensure  => present,
     path    => "${settings::confdir}/puppet.conf",

@@ -15,8 +15,8 @@ Puppet::Reports.register_report(:report2snow) do
 	def process
     # Open a file for debugging purposes
     debugFile = File.open('/var/log/puppetlabs/puppetserver/report2snow.log','w')
-    f.write("--- strating process ---\n")
-    f.write("--- closing file ---\n")
+    debugFile.write("--- strating process ---\n")
+    debugFile.write("--- closing file ---\n")
     debugFile.close
 	end
 end

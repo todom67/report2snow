@@ -21,8 +21,8 @@ there have been corrective changes.
 
 On the Puppet Master, this module:
 
-* adds configuration to /etc/puppetlabs/puppet/puppet.conf
-* creates the configuration file /etc/puppetlabs/puppet/report2snow.yaml
+* Adds configuration to /etc/puppetlabs/puppet/puppet.conf
+* Creates the configuration file /etc/puppetlabs/puppet/report2snow.yaml
 * Adds a ruby plugin to commuincate with the ServiceNow API
 * Create the log file /var/log/puppetlabs/puppetserver/report2snow.log
 
@@ -66,7 +66,9 @@ username: PROVIDE_THE_SERVICENOW_USER
 password: PROVIDE_THE_PASSWORD
 ```
 
-* Edit /etc/puppetlabs/puppet/report2snow.yaml. Add the ServiceNow username and password:
+* Edit /etc/puppetlabs/puppet/report2snow.yaml. (**NOTE: this file is only created once by puppet and then not
+  changed back on subsequent puppet runs.)
+  Add the ServiceNow username and password:
 
 ```yaml
 ---

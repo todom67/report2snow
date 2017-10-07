@@ -1,4 +1,4 @@
 ---
 api_url: "<%= $report2snow::url%>"
-password: "<%= @servicenow_password %>"
-username: "<%= @servicenow_username %>"
+password: "<%= $report2snow::servicenow_password %>"
+username: "<%= $report2snow::servicenow_username %>"

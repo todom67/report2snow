@@ -38,9 +38,9 @@ Puppet::Reports.register_report(:report2snow) do
         :state => '7',
         :sys_created_by => 'Puppet but not Kermit',
         :urgency => '1',
-        :work_notes => "Node Reports: [code]<a class='web' target='_blank' href='https://#{PUPPETCONSOLE}/#/node_groups/inventory/node/#{self.host}/reports'>Reports</a>[/code]"
+        :work_notes => "Node Reports: [code]<a class='web' target='_blank' href='#{PUPPETCONSOLE}/#/node_groups/inventory/node/#{self.host}/reports'>Reports</a>[/code]"
       }
-      debugFile.write("Payload: #{request_body_map}-----\n")
+      debugFile.write("Payload:-----\n #{request_body_map}\n-----\n")
       response = RestClient.post("#{SN_URL}",
                                    request_body_map.to_json,    # Encode the entire body as JSON
                                   {
@@ -48,8 +48,12 @@ Puppet::Reports.register_report(:report2snow) do
                                     :content_type => 'application/json',
                                     :accept => 'application/json'}
                                 )
-      debugFile.write("Response: #{response}-----\n")
-
+      debugFile.write("Response:-----\n #{response}\n-----\n")
+      responseData = JSON.parse(response)
+      incidentNumber = responseData['result']['number']
+      created = responseData['result']['opened_at']
+      debugFile.write("Puppet run on #{self.host} resulted in a status of '#{real_status}'' in the '#{self.environment}' environment")
+      debugFile.write("ServiceNow Incident #{incidentNumber} was created on #{created}")
       debugFile.write("Done!!\n")  
     end
     

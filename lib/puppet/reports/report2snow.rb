@@ -17,7 +17,7 @@ Puppet::Reports.register_report(:report2snow) do
 
 	def process
     # Open a file for debugging purposes
-    debugFile = File.open('/var/log/puppetlabs/puppetserver/report2snow.log','w')
+    debugFile = File.open('/var/log/puppetlabs/puppetserver/report2snow.log','a')
 
     # We only want to send a report if we have a corrective change
     self.status == "changed" && self.corrective_change == true ? real_status = "#{self.status} (corrective)" : real_status = "#{self.status}" 
@@ -46,13 +46,12 @@ Puppet::Reports.register_report(:report2snow) do
                                     :content_type => 'application/json',
                                     :accept => 'application/json'}
                                 )
-      # debugFile.write("Response:-----\n #{response}\n-----\n")
       responseData = JSON.parse(response)
       incidentNumber = responseData['result']['number']
       created = responseData['result']['opened_at']
-      debugFile.write("Puppet run on #{self.host} resulted in a status of '#{real_status}'' in the '#{self.environment}' environment")
-      debugFile.write("ServiceNow Incident #{incidentNumber} was created on #{created}")
-      debugFile.write("Done!!\n")  
+      timestamp = Time.now.utc.iso8601
+      debugFile.write("[#{timestamp}]: Puppet run on #{self.host} resulted in a status of '#{real_status}'' in the '#{self.environment}' environment\n")
+      debugFile.write("[#{timestamp}]: ServiceNow Incident #{incidentNumber} was created on #{created}\n")
     end
     debugFile.close
 	end

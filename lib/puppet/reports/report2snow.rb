@@ -56,4 +56,3 @@ Puppet::Reports.register_report(:report2snow) do
     debugFile.close
 	end
 end
-

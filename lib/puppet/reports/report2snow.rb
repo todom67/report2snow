@@ -18,13 +18,12 @@ Puppet::Reports.register_report(:report2snow) do
 	def process
     # Open a file for debugging purposes
     debugFile = File.open('/var/log/puppetlabs/puppetserver/report2snow.log','w')
-    debugFile.write("--- starting process ---\n")
+
     # We only want to send a report if we have a corrective change
     self.status == "changed" && self.corrective_change == true ? real_status = "#{self.status} (corrective)" : real_status = "#{self.status}" 
     msg = "Puppet run resulted in a status of '#{real_status}'' in the '#{self.environment}' environment"
 
     if real_status == 'changed (corrective)' then
-      debugFile.write("We have a #{real_status} so we are going to call service now\n")
       request_body_map = {
         :active => 'false',
         :category => 'Puppet Corrective Change',
@@ -40,7 +39,6 @@ Puppet::Reports.register_report(:report2snow) do
         :urgency => '1',
         :work_notes => "Node Reports: [code]<a class='web' target='_blank' href='#{PUPPETCONSOLE}/#/node_groups/inventory/node/#{self.host}/reports'>Reports</a>[/code]"
       }
-      debugFile.write("Payload:-----\n #{request_body_map}\n-----\n")
       response = RestClient.post("#{SN_URL}",
                                    request_body_map.to_json,    # Encode the entire body as JSON
                                   {
@@ -48,7 +46,7 @@ Puppet::Reports.register_report(:report2snow) do
                                     :content_type => 'application/json',
                                     :accept => 'application/json'}
                                 )
-      debugFile.write("Response:-----\n #{response}\n-----\n")
+      # debugFile.write("Response:-----\n #{response}\n-----\n")
       responseData = JSON.parse(response)
       incidentNumber = responseData['result']['number']
       created = responseData['result']['opened_at']
@@ -56,9 +54,6 @@ Puppet::Reports.register_report(:report2snow) do
       debugFile.write("ServiceNow Incident #{incidentNumber} was created on #{created}")
       debugFile.write("Done!!\n")  
     end
-    
-    
-    debugFile.write("--- closing file ---\n")
     debugFile.close
 	end
 end

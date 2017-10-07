@@ -41,7 +41,7 @@ Puppet::Reports.register_report(:report2snow) do
 		whoami = %x( hostname -f ).chomp
 	    msg = "Puppet run resulted in a status: #{real_status} in the #{self.environment} environment"
         headers = '--header "Content-Type:application/json" --header "Accept: application/json"'
-
+        f.write("msg: #{msq}")
         level = ''
         log_mesg = ""
         if (self.logs.length > 0) then

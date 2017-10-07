@@ -12,7 +12,8 @@
 
 class report2snow (
   Stdlib::Httpsurl $url,
-  Stdlib::Httpsurl $puppet_console
+  Stdlib::Httpsurl $puppet_console,
+  Sting $debug = false
 ) {
   pe_ini_setting { "${module_name}_enable_reports":
     ensure  => present,

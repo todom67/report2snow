@@ -1,3 +1,4 @@
 ---
-api_url: "<%= $report2snow::url%>"
-console_url: "<%= $report2snow::puppet_console %>"
+api_url: <%= $report2snow::url%>
+console_url: <%= $report2snow::puppet_console %>
+debug: <%= $report2snow::debug %>

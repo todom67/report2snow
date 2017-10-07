@@ -14,15 +14,16 @@ Puppet::Reports.register_report(:report2snow) do
   SN_USERNAME = @config['username']
   SN_PASSWORD = @config['password']
   PUPPETCONSOLE = @config['console_url']
+  DEBUG = @config['debug']
 
 	def process
     # Open a file for debugging purposes
-    debugFile = File.open('/var/log/puppetlabs/puppetserver/report2snow.log','a')
-
+    logFile = File.open('/var/log/puppetlabs/puppetserver/report2snow.log','a')
+    timestamp = Time.now.utc.iso8601
     # We only want to send a report if we have a corrective change
     self.status == "changed" && self.corrective_change == true ? real_status = "#{self.status} (corrective)" : real_status = "#{self.status}" 
     msg = "Puppet run resulted in a status of '#{real_status}'' in the '#{self.environment}' environment"
-
+    DEBUG == true ? logFile.write("[#{timestamp}]: DEBUG: msg: #{msg}\n")
     if real_status == 'changed (corrective)' then
       request_body_map = {
         :active => 'false',
@@ -39,6 +40,7 @@ Puppet::Reports.register_report(:report2snow) do
         :urgency => '1',
         :work_notes => "Node Reports: [code]<a class='web' target='_blank' href='#{PUPPETCONSOLE}/#/node_groups/inventory/node/#{self.host}/reports'>Reports</a>[/code]"
       }
+      DEBUG == true ? logFile.write("[#{timestamp}]: DEBUG: payload:\n-------\n#{request_body_map}\n-----\n")
       response = RestClient.post("#{SN_URL}",
                                    request_body_map.to_json,    # Encode the entire body as JSON
                                   {
@@ -46,13 +48,13 @@ Puppet::Reports.register_report(:report2snow) do
                                     :content_type => 'application/json',
                                     :accept => 'application/json'}
                                 )
+                                DEBUG == true ? logFile.write("[#{timestamp}]: DEBUG: response:\n-------\n#{response}\n-----\n")
       responseData = JSON.parse(response)
       incidentNumber = responseData['result']['number']
       created = responseData['result']['opened_at']
-      timestamp = Time.now.utc.iso8601
-      debugFile.write("[#{timestamp}]: Puppet run on #{self.host} resulted in a status of #{real_status} in the #{self.environment} environment\n")
-      debugFile.write("[#{timestamp}]: ServiceNow Incident #{incidentNumber} was created on #{created}\n")
+      logFile.write("[#{timestamp}]: Puppet run on #{self.host} resulted in a status of #{real_status} in the #{self.environment} environment\n")
+      logFile.write("[#{timestamp}]: ServiceNow Incident #{incidentNumber} was created on #{created}\n")
     end
-    debugFile.close
+    logFile.close
 	end
 end

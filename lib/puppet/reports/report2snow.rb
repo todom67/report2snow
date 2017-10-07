@@ -7,10 +7,10 @@ Puppet::Reports.register_report(:report2snow) do
   @configfile = File.join([File.dirname(Puppet.settings[:config]), "report2snow.yaml"])
   raise(Puppet::ParseError, "Servicenow report config file #{@configfile} not readable") unless File.exist?(@configfile)
 
-  @config = YAML.load_file(@configfile)
-  API_URL = config['api_url']
-  USERNAME = config['username']
-  PASSWORD = config['password']
+  config = YAML.load_file(@configfile)
+  API_URL = @config['api_url']
+  USERNAME = @config['username']
+  PASSWORD = @config['password']
 
 	def process
     # Open a file for debugging purposes

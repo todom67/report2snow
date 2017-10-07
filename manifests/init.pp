@@ -12,8 +12,8 @@
 
 class report2snow (
   $url,
-  String $servicenow_username = undef,
-  String $servicenow_password = undef
+  String $username = undef,
+  String $password = undef
 ) {
   validate_re($url, 'https:\/\/.+.service-now.com\/api/now\/.+', 'The URL is invalid')
 

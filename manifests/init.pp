@@ -37,7 +37,7 @@ class report2snow (
     owner   => 'pe-puppet',
     group   => 'pe-puppet',
     mode    => '0644',
-    # replace => false,
+    replace => false,
     content => epp("${module_name}/${module_name}.yaml.epp"),
   }
 }

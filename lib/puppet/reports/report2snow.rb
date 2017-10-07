@@ -40,7 +40,16 @@ Puppet::Reports.register_report(:report2snow) do
         :urgency => '1',
         :work_notes => "Node Reports: [code]<a class='web' target='_blank' href='https://#{PUPPETCONSOLE}/#/node_groups/inventory/node/#{self.host}/reports'>Reports</a>[/code]"
       }
-      debugFile.write("Payload: #{request_body_map}")
+      debugFile.write("Payload: #{request_body_map}-----\n")
+      response = RestClient.post("#{SN_URL}/api/now/table/incident",
+                                   request_body_map.to_json,    # Encode the entire body as JSON
+                                  {
+                                    :authorization => "Basic #{Base64.strict_encode64("#{SN_USERNAME}:#{SN_PASSWORD}")}",
+                                    :content_type => 'application/json',
+                                    :accept => 'application/json'}
+                                )
+      debugFile.write("Response: #{response}-----\n")
+
       debugFile.write("Done!!\n")  
     end
     

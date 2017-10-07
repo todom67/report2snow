@@ -26,6 +26,7 @@ Puppet::Reports.register_report(:report2snow) do
         f = File.open('/var/log/puppetlabs/puppetserver/report2snow.log','w')
 
         # We only want to send a report if we have a corrective change
+        real_status = ''
 		if (self.status == "changed") then
 			if (self.corrective_change == true) then
 				real_status = "#{self.status} (corrective)"
@@ -39,8 +40,8 @@ Puppet::Reports.register_report(:report2snow) do
 		end
 
 		whoami = %x( hostname -f ).chomp
-	    msg = "Puppet run resulted in a status: #{real_status} in the #{self.environment} environment"
-        headers = '--header "Content-Type:application/json" --header "Accept: application/json"'
+	  msg = "Puppet run resulted in a status: #{real_status} in the #{self.environment} environment"
+    headers = '--header "Content-Type:application/json" --header "Accept: application/json"'
         f.write("msg: #{msq}")
         level = ''
         log_mesg = ""

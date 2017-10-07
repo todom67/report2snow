@@ -2,3 +2,6 @@
 api_url: <%= $report2snow::url%>
 console_url: <%= $report2snow::puppet_console %>
 debug: <%= $report2snow::debug %>
+# add servicenow username and password below
+username: PROVIDE_THE_SERVICENOW_USER
+password: PROVIDE_THE_PASSWORD
